@@ -18,6 +18,7 @@ namespace TP1Tests
             List<Defecto> Defectos = new List<Defecto>();
 
             TimeSpan hi = DateTime.Now.TimeOfDay;
+            //Hora fin no debe pasar al dia siguiente
             TimeSpan hf = new TimeSpan(hi.Hours + 2, 0, 0);
 
             var Turno = new Turno(hi, hf);
@@ -49,6 +50,7 @@ namespace TP1Tests
             Defectos.Add(d);
 
             TimeSpan hi = DateTime.Now.TimeOfDay;
+            //Hora fin no debe pasar al dia siguiente
             TimeSpan hf = new TimeSpan(hi.Hours + 2, 0, 0);
 
             var Turno = new Turno(hi, hf);
@@ -89,6 +91,66 @@ namespace TP1Tests
             // assert
 
             Assert.AreEqual(hi.Add( new TimeSpan(3,0,0)).Hours, respuesta);
+        }
+
+        [TestMethod]
+        public void AgregarUnParAPrimeraFueraDeHora()
+        {
+            // arrange
+
+            var OP = new OP();
+            List<Defecto> Defectos = new List<Defecto>();
+
+            TimeSpan hi = DateTime.Now.TimeOfDay;
+            //Hora fin no debe pasar al dia siguiente
+            TimeSpan hf = new TimeSpan(hi.Hours + 2, 0, 0);
+
+            var Turno = new Turno(hi, hf);
+
+            TimeSpan hp1 = new TimeSpan(hf.Hours + 1, 32, 0);
+
+            OP.IniciarInspeccion(Turno, Defectos);
+            OP.AgregarPrimera(hp1);
+
+            // act
+
+            var respuesta = OP.ObtenerPrimerasHora(hp1);
+
+
+            // assert
+
+            Assert.AreEqual(0, respuesta);
+        }
+
+        [TestMethod]
+        public void AgregarDefectoPieDerechoReprocesadoFueraDeHora()
+        {
+            // arrange
+
+            var OP = new OP();
+            List<Defecto> Defectos = new List<Defecto>();
+
+            Defecto d = new Defecto("Zuela Despegada", TipoDefecto.Reprocesado);
+            Defectos.Add(d);
+
+            TimeSpan hi = DateTime.Now.TimeOfDay;
+            //Hora fin no debe pasar al dia siguiente
+            TimeSpan hf = new TimeSpan(hi.Hours + 2, 0, 0);
+
+            var Turno = new Turno(hi, hf);
+
+            TimeSpan hp1 = new TimeSpan(hf.Hours + 1, 32, 0);
+
+            OP.IniciarInspeccion(Turno, Defectos);
+            OP.AgregarHallazgo(hp1, d, d.TipoDefecto, pie.Izquierdo);
+
+            // act
+
+            var respuesta = OP.ObtenerHallazgoHora(hp1, d, d.TipoDefecto, pie.Derecho);
+
+            // assert
+
+            Assert.AreEqual(0, respuesta);
         }
     }
 }
